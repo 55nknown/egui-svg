@@ -1,4 +1,4 @@
-use std::{path::Path, time::Instant};
+use std::path::Path;
 
 pub mod color;
 pub use color::SvgColor;
