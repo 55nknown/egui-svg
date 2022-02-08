@@ -2,7 +2,7 @@ use std::path::Path;
 
 pub mod color;
 pub use color::SvgColor;
-use egui::{ColorImage, TextureHandle, Vec2};
+use egui::{Color32, ColorImage, TextureHandle, Vec2};
 use tiny_skia::Pixmap;
 
 pub struct EguiSvg {
@@ -39,8 +39,8 @@ impl EguiSvg {
         Ok(Self::from_data(&svg_data))
     }
 
-    pub fn color(mut self, color: SvgColor) -> Self {
-        self.color = color;
+    pub fn color(mut self, color: Color32) -> Self {
+        self.color = SvgColor::Color(color);
         self
     }
 }
@@ -51,20 +51,22 @@ impl EguiSvg {
         let opt = usvg::Options::default();
         // opt.fontdb.load_system_fonts(); // this is so sloooow
 
-        let rtree = usvg::Tree::from_data(svg_data, &opt.to_ref()).unwrap();
+        if let Ok(rtree) = usvg::Tree::from_data(svg_data, &opt.to_ref()) {
+            let pixmap_size = fit_to
+                .fit_to(rtree.svg_node().size.to_screen_size())
+                .unwrap();
+            let mut pixmap = Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
+            resvg::render(
+                &rtree,
+                fit_to,
+                tiny_skia::Transform::default(),
+                pixmap.as_mut(),
+            );
 
-        let pixmap_size = fit_to
-            .fit_to(rtree.svg_node().size.to_screen_size())
-            .unwrap();
-        let mut pixmap = Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
-        resvg::render(
-            &rtree,
-            fit_to,
-            tiny_skia::Transform::default(),
-            pixmap.as_mut(),
-        );
-
-        pixmap
+            pixmap
+        } else {
+            return Pixmap::new(1, 1).unwrap();
+        }
     }
 
     fn load_texture(&self, ctx: &egui::Context) -> TextureHandle {
