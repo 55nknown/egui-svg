@@ -47,8 +47,6 @@ impl EguiSvg {
 
 impl EguiSvg {
     fn render(svg_data: &[u8], size: f32) -> Pixmap {
-        let timer = Instant::now();
-
         let fit_to = usvg::FitTo::Zoom(size);
         let opt = usvg::Options::default();
         // opt.fontdb.load_system_fonts(); // this is so sloooow
@@ -64,10 +62,6 @@ impl EguiSvg {
             fit_to,
             tiny_skia::Transform::default(),
             pixmap.as_mut(),
-        );
-        println!(
-            "render took: {}ms",
-            Instant::now().duration_since(timer).as_millis()
         );
 
         pixmap
