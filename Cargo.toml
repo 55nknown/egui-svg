@@ -1,0 +1,17 @@
+[package]
+name = "egui_svg"
+version = "0.1.0"
+authors = ["55nknown <55nknown@pm.me>"]
+edition = "2021"
+repository = "https://github.com/55nknown/egui-svg"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace]
+resolver = "2"
+members = ["example"]
+
+[dependencies]
+
+[profile.release]
+opt-level = 2

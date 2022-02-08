@@ -1,0 +1,15 @@
+[package]
+name = "egui_svg_example"
+version = "0.1.0"
+edition = "2021"
+authors = ["55nknown <55nknown@pm.me>"]
+repository = "https://github.com/55nknown/egui-svg"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+eframe = "0.16.0"
