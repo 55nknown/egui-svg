@@ -1,5 +1,5 @@
 [package]
-name = "egui_svg"
+name = "egui-svg"
 version = "0.1.0"
 authors = ["55nknown <55nknown@pm.me>"]
 edition = "2021"
@@ -12,6 +12,14 @@ resolver = "2"
 members = ["example"]
 
 [dependencies]
+egui = { git = "https://github.com/emilk/egui", branch = "master" }
+resvg = "0.20.0"
+usvg = "0.20.0"
+tiny-skia = "0.6.3"
 
 [profile.release]
 opt-level = 2
+
+[patch.crates-io]
+# If you want to use the bleeding edge version of `egui`:
+eframe = { git = "https://github.com/emilk/egui", branch = "master" }

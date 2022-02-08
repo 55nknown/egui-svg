@@ -1,10 +1,14 @@
 use eframe::{egui, egui::*, epi};
 
-pub struct SvgApp {}
+pub struct SvgApp {
+    svg: egui_svg::EguiSvg,
+}
 
 impl Default for SvgApp {
     fn default() -> Self {
-        SvgApp {}
+        SvgApp {
+            svg: egui_svg::EguiSvg::default(),
+        }
     }
 }
 
@@ -13,5 +17,9 @@ impl epi::App for SvgApp {
         "egui_svg_example"
     }
 
-    fn update(&mut self, _ctx: &egui::CtxRef, _frame: &epi::Frame) {}
+    fn update(&mut self, ctx: &egui::Context, _frame: &epi::Frame) {
+        CentralPanel::default().show(ctx, |ui| {
+            self.svg.ui(ui);
+        });
+    }
 }
