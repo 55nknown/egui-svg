@@ -1,7 +1,10 @@
 use std::path::Path;
 
-pub mod color;
+mod color;
 pub use color::SvgColor;
+mod fit;
+pub use fit::SvgFit;
+
 use egui::{Color32, ColorImage, TextureHandle, Vec2};
 use tiny_skia::Pixmap;
 
@@ -9,7 +12,9 @@ pub struct EguiSvg {
     size: egui::Vec2,
     texture: Option<egui::TextureHandle>,
     pixmap: Pixmap,
+    data: Vec<u8>,
     color: SvgColor,
+    fit: SvgFit,
 }
 
 impl Default for EguiSvg {
@@ -25,12 +30,13 @@ impl EguiSvg {
     }
 
     pub fn from_data(svg_data: &[u8]) -> Self {
-        let pixmap = Self::render(svg_data, 1.0);
         Self {
             color: SvgColor::Original,
-            size: Vec2::new(pixmap.width() as f32, pixmap.height() as f32),
-            pixmap: pixmap,
+            size: Vec2::ZERO,
+            pixmap: Pixmap::new(1, 1).unwrap(),
             texture: None,
+            fit: SvgFit::Scale(1.0),
+            data: svg_data.to_vec(),
         }
     }
 
@@ -43,11 +49,21 @@ impl EguiSvg {
         self.color = SvgColor::Color(color);
         self
     }
+
+    pub fn fit(mut self, fit: SvgFit) -> Self {
+        self.fit = fit;
+        self
+    }
+
+    pub fn render(mut self) -> Self {
+        self.pixmap = Self::rasterize(&self.data, self.fit.into());
+        self.size = Vec2::new(self.pixmap.width() as f32, self.pixmap.height() as f32);
+        self
+    }
 }
 
 impl EguiSvg {
-    fn render(svg_data: &[u8], size: f32) -> Pixmap {
-        let fit_to = usvg::FitTo::Zoom(size);
+    fn rasterize(svg_data: &[u8], fit_to: usvg::FitTo) -> Pixmap {
         let opt = usvg::Options::default();
         // opt.fontdb.load_system_fonts(); // this is so sloooow
 
@@ -78,7 +94,7 @@ impl EguiSvg {
                     .pixmap
                     .pixels()
                     .iter()
-                    .map(|p| SvgColor::map(&self.color, p))
+                    .map(|p| self.color.map(p))
                     .collect(),
             },
         );

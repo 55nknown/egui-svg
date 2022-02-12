@@ -7,8 +7,8 @@ pub enum SvgColor {
 }
 
 impl SvgColor {
-    pub fn map(color: &Self, p: &PremultipliedColorU8) -> Color32 {
-        match color {
+    pub fn map(&self, p: &PremultipliedColorU8) -> Color32 {
+        match self {
             Self::Original => {
                 Color32::from_rgba_premultiplied(p.red(), p.green(), p.blue(), p.alpha())
             }

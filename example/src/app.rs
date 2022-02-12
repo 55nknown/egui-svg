@@ -7,7 +7,7 @@ pub struct SvgApp {
 impl Default for SvgApp {
     fn default() -> Self {
         SvgApp {
-            svg: egui_svg::EguiSvg::default(),
+            svg: egui_svg::EguiSvg::default().render(),
         }
     }
 }
